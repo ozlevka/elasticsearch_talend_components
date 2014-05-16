@@ -10,11 +10,19 @@
 		org.talend.core.model.metadata.types.JavaTypesManager
 		org.talend.core.model.metadata.types.JavaType
 		java.util.List 
-    	java.util.Map		
+    	java.util.Map
 	" 
 %>
 <% 
     CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
     INode node = (INode)codeGenArgument.getArgument();
     String cid = node.getUniqueName();
+    String bulkSize = ElementParameterParser.getValue(node,"__BULK_SIZE__");
+    String host = ElementParameterParser.getValue(node,"__HOST__");
+    String port = ElementParameterParser.getValue(node,"__PORT__");
 %>
+	com.google.inject.Injector injector_<%=cid%> = com.google.inject.Guice.createInjector(new org.ankor.elasticwrapper.ModuleBuilder());
+	org.ankor.elasticwrapper.BulkBuilder builder_<%=cid%> = injector_<%=cid%>.getInstance(org.ankor.elasticwrapper.BulkBuilder.class);
+	int bulkSize_<%=cid%> = <%=bulkSize%>;
+	org.ankor.elasticwrapper.ElasticClient client_<%=cid%> = injector_<%=cid%>.getInstance(org.ankor.elasticwrapper.ElasticClient.class);
+	client_<%=cid%>.setUrl("<%=host%>", <%=port%>);

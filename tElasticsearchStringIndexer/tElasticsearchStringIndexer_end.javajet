@@ -19,3 +19,7 @@
     INode node = (INode)codeGenArgument.getArgument();
     String cid = node.getUniqueName();
 %>
+
+	if(builder_<%=cid%>.getQueueLength() > 0) {
+		client_<%=cid%>.executeBulk(builder_<%=cid%>);
+	}

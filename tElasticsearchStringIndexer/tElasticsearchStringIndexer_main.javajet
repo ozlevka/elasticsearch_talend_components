@@ -20,6 +20,8 @@
     
     String line_separator = System.getProperty("line.separator");
     String template = ElementParameterParser.getValue(node, "__JSON_TEMPLATE__");
+    String index = ElementParameterParser.getValue(node,"__INDEX__");
+    String type = ElementParameterParser.getValue(node,"__DOC_TYPE__");
     template = template.replace(line_separator, " ");
     
     IMetadataTable preMetadata = null;
@@ -42,4 +44,9 @@
 <%
 	}//2
 %>
-	System.out.println(json_<%=cid%>);
+	builder_<%=cid%>.index(json_<%=cid%>, null, "<%=index%>","<%=type%>");
+	
+	if(builder_<%=cid%>.getQueueLength() >= bulkSize_<%=cid%>) {
+		client_<%=cid%>.executeBulk(builder_<%=cid%>);
+		builder_<%=cid%>.clear();
+	}
