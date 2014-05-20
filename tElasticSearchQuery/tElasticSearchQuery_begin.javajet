@@ -1,0 +1,46 @@
+<%@ jet 
+	imports="
+		org.talend.core.model.process.INode 
+		org.talend.core.model.process.ElementParameterParser 
+		org.talend.core.model.metadata.IMetadataTable 
+		org.talend.core.model.metadata.IMetadataColumn 
+		org.talend.core.model.process.IConnection
+		org.talend.core.model.process.IConnectionCategory
+		org.talend.designer.codegen.config.CodeGeneratorArgument
+		org.talend.core.model.metadata.types.JavaTypesManager
+		org.talend.core.model.metadata.types.JavaType
+		java.util.List 
+    	java.util.Map		
+	" 
+%>
+<% 
+    CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+    INode node = (INode)codeGenArgument.getArgument();
+    String cid = node.getUniqueName();
+    
+    String host = ElementParameterParser.getValue(node, "__HOST__");
+    String port = ElementParameterParser.getValue(node, "__PORT__");
+    String query = ElementParameterParser.getValue(node, "__JSON_TEMPLATE__");
+    String line_separator = System.getProperty("line.separator");
+    
+    query = query.replace(line_separator, " ");
+    
+    String index = ElementParameterParser.getValue(node, "__INDEX__");
+    String type = ElementParameterParser.getValue(node, "__DOC_TYPE__");
+    
+%>
+	com.google.inject.Injector injector_<%=cid%> = com.google.inject.Guice.createInjector(new org.ankor.elasticwrapper.ModuleBuilder());
+	org.ankor.elasticwrapper.ElasticClient client_<%=cid%> = injector_<%=cid%>.getInstance(org.ankor.elasticwrapper.ElasticClient.class);
+	client_<%=cid%>.setUrl("<%=host%>", <%=port%>);
+		
+	org.ankor.elasticwrapper.queries.QueryData qd_<%=cid%> = org.ankor.elasticwrapper.queries.QueryDataFactory.getQueryData(org.ankor.elasticwrapper.queries.QueryDataType.SEARCH);
+	
+	qd_<%=cid%>.setQuery("<%=query%>"); //Here do replases to parameters
+	qd_<%=cid%>.addIndex("<%=index%>");
+	qd_<%=cid%>.addType("<%=type%>");
+	
+	com.google.gson.JsonObject result_<%=cid%> = client_<%=cid%>.executeQuery(qd_<%=cid%>);
+	
+	com.google.gson.JsonArray hits_<%=cid%> = result_<%=cid%>.get("hits").getAsJsonObject().get("hits").getAsJsonArray();
+	
+	for(int i = 0; i < 	hits_<%=cid%>.size(); i++) {

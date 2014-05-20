@@ -22,6 +22,8 @@
     String template = ElementParameterParser.getValue(node, "__JSON_TEMPLATE__");
     String index = ElementParameterParser.getValue(node,"__INDEX__");
     String type = ElementParameterParser.getValue(node,"__DOC_TYPE__");
+    String id = ElementParameterParser.getValue(node,"__ID_COLUMN__");
+    
     template = template.replace(line_separator, " ");
     
     IMetadataTable preMetadata = null;
@@ -37,14 +39,17 @@
 	for(int i = 0; i < columns.size(); i++) { //1
 		IMetadataColumn col = columns.get(i); 
 %>
-
 	data_<%=cid%> = <%=inRowName%>.<%=col.getLabel()%>;
 	json_<%=cid%> = json_<%=cid%>.replace(":" + "<%=col.getLabel()%>", data_<%=cid%>);
 	
 <%
 	}//2
 %>
-	builder_<%=cid%>.index(json_<%=cid%>, null, "<%=index%>","<%=type%>");
+	String id_<%=cid%> = null;
+<% if(id != null && id != "") {%>
+	id_<%=cid%> = <%=inRowName%>.<%=id%>;
+<% } %>
+	builder_<%=cid%>.index(json_<%=cid%>, id_<%=cid%>, "<%=index%>","<%=type%>");
 	
 	if(builder_<%=cid%>.getQueueLength() >= bulkSize_<%=cid%>) {
 		client_<%=cid%>.executeBulk(builder_<%=cid%>);
