@@ -31,14 +31,15 @@
 	String query_data_<%=cid%> = "<%=query%>";
 <%
 	IMetadataTable preMetadata = null;
+	String inRowName = "";
 	if ((node.getIncomingConnections()!=null)&&(node.getIncomingConnections().size()>0)) {
 		preMetadata = node.getIncomingConnections().get(0).getMetadataTable();
-		String inRowName = node.getIncomingConnections().get(0).getName();
-		List<IMetadataColumn> columns = preMetadata.getListColumns();
-		for (int i = 0; i < columns.size(); i++) {
-			IMetadataColumn col = columns.get(i); 
+		inRowName = node.getIncomingConnections().get(0).getName();
+		List<Map<String, String>> replaceMapping = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__REPLACE__");
+		for (Map<String, String> rep : replaceMapping) {
+			String replaceName = rep.get("FIELD"); 
 %>
-		query_data_<%=cid%> = query_data_<%=cid%>.replace(":<%=col.getLabel()%>", <%=inRowName%>.<%=col.getLabel()%>);
+		query_data_<%=cid%> = query_data_<%=cid%>.replace(":<%=replaceName%>", (<%=inRowName%>.<%=replaceName%>).toString());
 	
 <% }
 }%>
@@ -66,9 +67,14 @@
 				if(key.equals("SCHEMA_COLUMN")) colName = column.get(key);
 				if(key.equals("JSON")) xPath = column.get(key);
 			}
+			if(xPath == "") {
 %>
-				<%=outRowName%>.<%=colName%> = org.ankor.elasticwrapper.JsonHelper.getJsonValueByPath(object_<%=cid%>,"<%=xPath%>");
+					<%=outRowName%>.<%=colName%> = <%=inRowName%>.<%=colName%>;
+<%		}else {
+%>
+					<%=outRowName%>.<%=colName%> = org.ankor.elasticwrapper.JsonHelper.getJsonValueByPath(object_<%=cid%>,"<%=xPath%>");
 <%
+				}
 			}
 %>
 		}
