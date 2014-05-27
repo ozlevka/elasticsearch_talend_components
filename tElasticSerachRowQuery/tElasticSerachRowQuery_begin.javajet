@@ -24,4 +24,4 @@
 
 	com.google.inject.Injector injector_<%=cid%> = com.google.inject.Guice.createInjector(new org.ankor.elasticwrapper.ModuleBuilder());
 	org.ankor.elasticwrapper.ElasticClient client_<%=cid%> = injector_<%=cid%>.getInstance(org.ankor.elasticwrapper.ElasticClient.class);
-	client_<%=cid%>.setUrl("<%=host%>", <%=port%>);
+	client_<%=cid%>.setUrl(<%=host%>, Integer.parseInt(<%=port%>));

@@ -25,4 +25,4 @@
 	org.ankor.elasticwrapper.BulkBuilder builder_<%=cid%> = injector_<%=cid%>.getInstance(org.ankor.elasticwrapper.BulkBuilder.class);
 	int bulkSize_<%=cid%> = <%=bulkSize%>;
 	org.ankor.elasticwrapper.ElasticClient client_<%=cid%> = injector_<%=cid%>.getInstance(org.ankor.elasticwrapper.ElasticClient.class);
-	client_<%=cid%>.setUrl("<%=host%>", <%=port%>);
+	client_<%=cid%>.setUrl(<%=host %>, Integer.parseInt(<%=port %>));
