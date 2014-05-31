@@ -16,5 +16,27 @@
 <% 
     CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
     INode node = (INode)codeGenArgument.getArgument();
-    String cid = node.getUniqueName();	
+    String cid = node.getUniqueName();
+    
+    String bulkSize = ElementParameterParser.getValue(node,"__BULK_SIZE__");
+    String host = ElementParameterParser.getValue(node,"__HOST__");
+    String port = ElementParameterParser.getValue(node,"__PORT__");
+    List<Map<String, String>> compareColumns = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__COMPARE__");	
 %>
+
+	org.ankor.elasticwrapper.main.VersioningBulkBuilder builder_<%=cid%> = new org.ankor.elasticwrapper.main.VersioningBulkBuilder();
+	int bulkSize_<%=cid%> = <%=bulkSize%>;
+	org.ankor.elasticwrapper.main.VersioningElasticClient client_<%=cid%> = new org.ankor.elasticwrapper.main.VersioningElasticClient();
+	client_<%=cid%>.setUrl(<%=host %>, Integer.parseInt(<%=port %>));
+	
+<%
+	for(java.util.Map<String, String> column : compareColumns) {
+		String compareField = column.get("NAME");
+%>
+		builder_<%=cid%>.addCompareField("<%=compareField%>");
+<%
+	}
+%>
+	 builder_<%=cid%>.setClient(client_<%=cid%>);
+	
+	
