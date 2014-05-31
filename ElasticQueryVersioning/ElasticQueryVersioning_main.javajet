@@ -16,5 +16,23 @@
 <% 
     CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
     INode node = (INode)codeGenArgument.getArgument();
-    String cid = node.getUniqueName();	
+    String cid = node.getUniqueName();
+    
+    List< ? extends IConnection> outConns = node.getOutgoingConnections();
+    String outRowName = null;
+    if(outConns != null && outConns.size() > 0) outRowName = outConns.get(0).getName();
+    List<Map<String, String>> columnMapping = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node,"__MAPPING__"); 	
 %>
+	
+	com.google.gson.JsonObject object_<%=cid%> = hits_<%=cid%>.get(i).getAsJsonObject();
+	<%
+		for(Map<String, String> column : columnMapping) {
+			String colName = "";
+			String xPath = "";
+			for(String key : column.keySet()) {
+				if(key.equals("SCHEMA_COLUMN")) colName = column.get(key);
+				if(key.equals("JSON")) xPath = column.get(key);
+			}
+%>				
+			<%=outRowName%>.<%=colName%> = org.ankor.elasticwrapper.JsonHelper.getJsonValueByPath(object_<%=cid%>,"<%=xPath%>");			
+<% }%>	

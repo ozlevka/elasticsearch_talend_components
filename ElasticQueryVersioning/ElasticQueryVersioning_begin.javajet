@@ -16,5 +16,28 @@
 <% 
     CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
     INode node = (INode)codeGenArgument.getArgument();
-    String cid = node.getUniqueName();	
+    String cid = node.getUniqueName();
+    
+    String host = ElementParameterParser.getValue(node, "__HOST__");
+    String port = ElementParameterParser.getValue(node, "__PORT__");
+    String query = ElementParameterParser.getValue(node, "__JSON_TEMPLATE__");
+    String line_separator = System.getProperty("line.separator");
+    
+    query = query.replace(line_separator, " ");
+    
+    String index = ElementParameterParser.getValue(node, "__INDEX__");
+    String type = ElementParameterParser.getValue(node, "__DOC_TYPE__");	
 %>
+
+	org.ankor.elasticwrapper.main.VersioningElasticClient client_<%=cid%> = new org.ankor.elasticwrapper.main.VersioningElasticClient();
+	org.ankor.elasticwrapper.queries.QueryData qd_<%=cid%> = new org.ankor.elasticwrapper.queries.SearchQueryData();
+	
+	qd_<%=cid%>.setQuery("<%=query%>"); //Here do replases to parameters
+	qd_<%=cid%>.addIndex("<%=index%>");
+	qd_<%=cid%>.addType("<%=type%>");
+	
+	com.google.gson.JsonObject result_<%=cid%> = client_<%=cid%>.executeQuery(qd_<%=cid%>);
+	
+	com.google.gson.JsonArray hits_<%=cid%> = result_<%=cid%>.get("hits").getAsJsonObject().get("hits").getAsJsonArray();
+	
+	for(int i = 0; i < 	hits_<%=cid%>.size(); i++) {
