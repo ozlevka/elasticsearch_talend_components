@@ -37,7 +37,10 @@
 	
 	qd_<%=cid%>.setQuery("<%=query%>"); //Here do replases to parameters
 	qd_<%=cid%>.addIndex("<%=index%>");
+<%  if(type != "") { %>	
 	qd_<%=cid%>.addType("<%=type%>");
+<%  } %>
+	
 	
 	com.google.gson.JsonObject result_<%=cid%> = client_<%=cid%>.executeQuery(qd_<%=cid%>);
 	

@@ -48,7 +48,7 @@
 	}//2
 %>
 	String id_<%=cid%> = null;
-<% if(id != null && id != "") {%>
+<% if(id != null && !id.equals("")) {%>
 	id_<%=cid%> = <%=inRowName%>.<%=id%>;
 <% } %>
 	builder_<%=cid%>.index(json_<%=cid%>, id_<%=cid%>, "<%=index%>","<%=type%>");
