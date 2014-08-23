@@ -41,7 +41,10 @@
 %>
 	if(<%=inRowName%>.<%=col.getLabel()%> !=  null) {
 		data_<%=cid%> = <%=inRowName%>.<%=col.getLabel()%>.toString();
-		json_<%=cid%> = json_<%=cid%>.replace(":" + "<%=col.getLabel()%>", data_<%=cid%>);
+		if(data_<%=cid%> == null) {
+			data_<%=cid%> = "";
+		}
+		json_<%=cid%> = json_<%=cid%>.replaceFirst(String.format("#%s","<%=col.getLabel()%>"), data_<%=cid%>);
 	}
 	
 <%
