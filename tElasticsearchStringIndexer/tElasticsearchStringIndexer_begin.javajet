@@ -20,9 +20,12 @@
     String bulkSize = ElementParameterParser.getValue(node,"__BULK_SIZE__");
     String host = ElementParameterParser.getValue(node,"__HOST__");
     String port = ElementParameterParser.getValue(node,"__PORT__");
+    String line_separator = System.getProperty("line.separator");
+    String template = ElementParameterParser.getValue(node, "__JSON_TEMPLATE__");
+    template = template.replace(line_separator, " ");
 %>
 	com.google.inject.Injector injector_<%=cid%> = com.google.inject.Guice.createInjector(new org.ankor.elasticwrapper.ModuleBuilder());
-	org.ankor.elasticwrapper.BulkBuilder builder_<%=cid%> = injector_<%=cid%>.getInstance(org.ankor.elasticwrapper.BulkBuilder.class);
+	org.ankor.elasticwrapper.BulkBuilder builder_<%=cid%> = new org.ankor.elasticwrapper.main.JsonTemplateBulkBuilder("<%=template%>");
 	int bulkSize_<%=cid%> = <%=bulkSize%>;
 	org.ankor.elasticwrapper.ElasticClient client_<%=cid%> = injector_<%=cid%>.getInstance(org.ankor.elasticwrapper.ElasticClient.class);
 	client_<%=cid%>.setUrl(<%=host %>, Integer.parseInt(<%=port %>));
