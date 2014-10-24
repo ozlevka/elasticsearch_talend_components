@@ -53,6 +53,6 @@
 <% } %>
 	builder_<%=cid%>.index(map_<%=cid%>, id_<%=cid%>, "<%=index%>","<%=type%>");
 	if(builder_<%=cid%>.getQueueLength() >= bulkSize_<%=cid%>) {
-		client_<%=cid%>.executeBulk(builder_<%=cid%>);
+		com.google.gson.JsonObject object_<%=cid%>_tmp = client_<%=cid%>.executeBulk(builder_<%=cid%>);
 		builder_<%=cid%>.clear();
 	}

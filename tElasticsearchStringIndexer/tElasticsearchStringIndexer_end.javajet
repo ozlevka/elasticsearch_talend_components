@@ -21,5 +21,6 @@
 %>
 
 	if(builder_<%=cid%>.getQueueLength() > 0) {
-		client_<%=cid%>.executeBulk(builder_<%=cid%>);
+		com.google.gson.JsonObject object_<%=cid%>_last = client_<%=cid%>.executeBulk(builder_<%=cid%>);
+		System.out.println(object_<%=cid%>_last);
 	}
